@@ -99,6 +99,7 @@
     min-height:190px;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     box-shadow:0 20px 40px -24px rgba(0,0,0,.6);
+    transition:transform .28s cubic-bezier(.2,.8,.2,1), opacity .28s ease;
   }
   .card .no{
     position:absolute;top:16px;left:18px;font-size:11px;color:var(--muted2);
@@ -128,6 +129,19 @@
   .mean-phrase{color:var(--ink);font-size:15.5px;line-height:1.6;max-width:420px;}
 
   .nav-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px;}
+  .restart-row{text-align:center;margin-top:10px;}
+  .restart-inline-btn{
+    background:none;border:none;color:var(--muted2);font-size:12.5px;
+    cursor:pointer;padding:6px 10px;border-radius:8px;transition:.15s;
+  }
+  .restart-inline-btn:hover{color:var(--teal);background:var(--panel2);}
+  .swipe-hint{
+    text-align:center;font-size:11.5px;color:var(--muted2);
+    margin:10px 0 0;
+  }
+  .card{ touch-action:pan-y; cursor:grab; will-change:transform; }
+  .card:active{ cursor:grabbing; }
+  .card.dragging{ transition:none !important; }
   .nav-btn{
     background:var(--panel2);border:1px solid var(--line);color:var(--ink);
     width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:17px;
@@ -337,6 +351,10 @@
       <button class="mark-btn" id="mark-btn">외웠어요</button>
       <button class="nav-btn" id="next-btn">›</button>
     </div>
+    <div class="restart-row">
+      <button class="restart-inline-btn" id="restart-first-btn">⟲ 처음으로</button>
+    </div>
+    <p class="swipe-hint">카드를 좌우로 밀어서 이전·다음 구절로 이동할 수 있어요</p>
 
     <div class="audio-panel">
       <button class="audio-btn" id="speak-btn"><span class="ico">🔊</span> 이 구절 듣기</button>
@@ -724,7 +742,61 @@ function renderCard(){
   refreshMalaDots();
 }
 
-el('#card').addEventListener('click', ()=> el('#card').classList.toggle('flipped'));
+/* ---------- card: swipe/drag to navigate, tap to flip ---------- */
+(function initCardGestures(){
+  const card = el('#card');
+  let dragging = false;
+  let dragMoved = false;
+  let startX = 0;
+  let dx = 0;
+  const SWIPE_THRESHOLD = 65;
+
+  card.addEventListener('pointerdown', (e)=>{
+    if(e.target.closest('#mark-btn')) return; // let the button handle its own click
+    dragging = true; dragMoved = false; dx = 0;
+    startX = e.clientX;
+    card.classList.add('dragging');
+    try{ card.setPointerCapture(e.pointerId); }catch(err){}
+  });
+
+  card.addEventListener('pointermove', (e)=>{
+    if(!dragging) return;
+    dx = e.clientX - startX;
+    if(Math.abs(dx) > 6) dragMoved = true;
+    if(dragMoved){
+      card.style.transform = `translateX(${dx}px) rotate(${dx/28}deg)`;
+      card.style.opacity = String(1 - Math.min(Math.abs(dx)/500, 0.35));
+    }
+  });
+
+  function endDrag(e){
+    if(!dragging) return;
+    dragging = false;
+    card.classList.remove('dragging');
+    card.style.transform = '';
+    card.style.opacity = '';
+
+    if(dragMoved && Math.abs(dx) > SWIPE_THRESHOLD){
+      stopAuto();
+      if(dx < 0 && idx < TOTAL-1){ idx++; renderCard(); saveIdx(); }
+      else if(dx > 0 && idx > 0){ idx--; renderCard(); saveIdx(); }
+    } else if(!dragMoved){
+      card.classList.toggle('flipped');
+    }
+    dragMoved = false;
+  }
+
+  card.addEventListener('pointerup', endDrag);
+  card.addEventListener('pointercancel', endDrag);
+})();
+
+el('#restart-first-btn').addEventListener('click', ()=>{
+  stopAuto();
+  idx = 0;
+  renderCard();
+  saveIdx();
+});
+
 el('#prev-btn').addEventListener('click', ()=>{ stopAuto(); if(idx>0){ idx--; renderCard(); saveIdx(); }});
 el('#next-btn').addEventListener('click', ()=>{ stopAuto(); if(idx<TOTAL-1){ idx++; renderCard(); saveIdx(); }});
 el('#mark-btn').addEventListener('click', (e)=>{
@@ -1039,9 +1111,9 @@ el('#reset-btn').addEventListener('click', async ()=>{
 })();
 </script>
 <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
   });
 }
 </script>
