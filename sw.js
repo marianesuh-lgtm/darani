@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dharani-cache-v1.1';
+const CACHE_NAME = 'dharani-cache-v2';
 const APP_SHELL = [
   './dharani.html',
   './privacy.html',
@@ -12,10 +12,15 @@ const APP_SHELL = [
 ];
 
 // install: pre-cache the app shell so the app can launch offline
+// (each file cached individually so one failure doesn't block the whole install)
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(APP_SHELL))
+      .then((cache) => Promise.all(
+        APP_SHELL.map((url) => cache.add(url).catch((err) => {
+          console.warn('SW precache failed for', url, err);
+        }))
+      ))
       .then(() => self.skipWaiting())
   );
 });
@@ -47,7 +52,15 @@ self.addEventListener('fetch', (event) => {
           }
           return res;
         })
-        .catch(() => cached);
+        .catch(() => {
+          // network failed: serve cache if we have it, otherwise a real
+          // offline Response — never resolve to undefined (causes ERR_FAILED)
+          if (cached) return cached;
+          return new Response(
+            '오프라인 상태이며 캐시된 사본이 없습니다.',
+            { status: 503, statusText: 'Offline', headers: { 'Content-Type': 'text/plain; charset=utf-8' } }
+          );
+        });
       return cached || network;
     })
   );
