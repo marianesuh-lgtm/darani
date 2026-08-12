@@ -32,5 +32,21 @@
       "type": "image/png",
       "purpose": "maskable"
     }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/screen-study.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "학습 모드 — 카드로 구절과 뜻을 익히고 염주 진행률을 확인합니다"
+    },
+    {
+      "src": "screenshots/screen-quiz.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "퀴즈 모드 — 정답을 고르면 산스크리트어와 해설이 함께 나타납니다"
+    }
   ]
 }
