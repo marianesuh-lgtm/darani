@@ -1,6 +1,6 @@
 const CACHE_NAME = 'dharani-cache-v2';
 const APP_SHELL = [
-  './dharani.html',
+  './index.html',
   './privacy.html',
   './manifest.json',
   './icons/icon-192.png',
