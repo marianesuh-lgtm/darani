@@ -139,7 +139,7 @@
     text-align:center;font-size:11.5px;color:var(--muted2);
     margin:10px 0 0;
   }
-  .card{ touch-action:pan-y; cursor:grab; will-change:transform; }
+  .card{ touch-action:pan-x; cursor:grab; will-change:transform; }
   .card:active{ cursor:grabbing; }
   .card.dragging{ transition:none !important; }
   .nav-btn{
@@ -751,11 +751,13 @@ function renderCard(){
   let dragMoved = false;
   let startX = 0;
   let dx = 0;
-  const SWIPE_THRESHOLD = 65;
+  const SWIPE_THRESHOLD = 50; // 슬라이드 민감도 (필요시 조절)
 
   card.addEventListener('pointerdown', (e)=>{
-    if(e.target.closest('#mark-btn')) return; // let the button handle its own click
-    dragging = true; dragMoved = false; dx = 0;
+    if(e.target.closest('#mark-btn')) return; // 버튼 클릭 예외 처리
+    dragging = true; 
+    dragMoved = false; 
+    dx = 0;
     startX = e.clientX;
     card.classList.add('dragging');
     try{ card.setPointerCapture(e.pointerId); }catch(err){}
@@ -764,10 +766,14 @@ function renderCard(){
   card.addEventListener('pointermove', (e)=>{
     if(!dragging) return;
     dx = e.clientX - startX;
-    if(Math.abs(dx) > 6) dragMoved = true;
+    
+    // 5px 이상 좌우로 이동했을 때만 드래그 시작
+    if(Math.abs(dx) > 5) dragMoved = true;
+    
     if(dragMoved){
-      card.style.transform = `translateX(${dx}px) rotate(${dx/28}deg)`;
-      card.style.opacity = String(1 - Math.min(Math.abs(dx)/500, 0.35));
+      // 좌우 이동 및 약간의 회전 효과 적용 (위아래 움직임은 차단)
+      card.style.transform = `translateX(${dx}px) rotate(${dx / 30}deg)`;
+      card.style.opacity = String(1 - Math.min(Math.abs(dx) / 400, 0.4));
     }
   });
 
@@ -780,10 +786,13 @@ function renderCard(){
 
     if(dragMoved && Math.abs(dx) > SWIPE_THRESHOLD){
       stopAuto();
-      if(dx < 0 && idx < TOTAL-1){ idx++; renderCard(); saveIdx(); }
-      else if(dx > 0 && idx > 0){ idx--; renderCard(); saveIdx(); }
+      if(dx < 0 && idx < TOTAL - 1){ 
+        idx++; renderCard(); saveIdx(); // 왼쪽으로 밀면 다음 카드
+      } else if(dx > 0 && idx > 0){ 
+        idx--; renderCard(); saveIdx(); // 오른쪽으로 밀면 이전 카드
+      }
     } else if(!dragMoved){
-      card.classList.toggle('flipped');
+      card.classList.toggle('flipped'); // 드래그가 아니면 카드가 뒤집힘
     }
     dragMoved = false;
   }
@@ -791,6 +800,7 @@ function renderCard(){
   card.addEventListener('pointerup', endDrag);
   card.addEventListener('pointercancel', endDrag);
 })();
+
 
 el('#restart-first-btn').addEventListener('click', ()=>{
   stopAuto();
