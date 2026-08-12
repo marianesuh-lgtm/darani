@@ -139,7 +139,7 @@
     text-align:center;font-size:11.5px;color:var(--muted2);
     margin:10px 0 0;
   }
-  .card{ touch-action:pan-y; cursor:grab; will-change:transform; }
+  .card{ touch-action:pan-x; cursor:grab; will-change:transform; }
   .card:active{ cursor:grabbing; }
   .card.dragging{ transition:none !important; }
   .nav-btn{
@@ -745,111 +745,54 @@ function renderCard(){
 }
 
 /* ---------- card: swipe/drag to navigate, tap to flip ---------- */
-/* ---------- shared slide transition for card navigation ---------- */
-function slideToCard(direction, updateFn){
-  // direction: -1 = 다음 카드(왼쪽으로 사라짐), 1 = 이전 카드(오른쪽으로 사라짐), 0 = 애니메이션 없이 즉시 전환
-  const card = el('#card');
-  if(direction === 0){
-    card.style.transform = ''; card.style.opacity = '';
-    updateFn();
-    return;
-  }
-  const flyX = direction * -1 * (card.offsetWidth * 0.85 + 60);
-  card.style.transition = 'transform .22s ease, opacity .22s ease';
-  card.style.transform = `translateX(${flyX}px) rotate(${direction * -8}deg)`;
-  card.style.opacity = '0';
-
-  setTimeout(()=>{
-    card.classList.add('dragging'); // 트랜지션 없이 즉시 반대편으로 재배치
-    card.style.transform = `translateX(${-flyX * 0.35}px)`;
-    card.style.opacity = '0';
-    updateFn();
-    void card.offsetWidth; // reflow
-    card.classList.remove('dragging');
-    requestAnimationFrame(()=>{
-      card.style.transform = '';
-      card.style.opacity = '';
-    });
-  }, 220);
-}
-
 (function initCardGestures(){
   const card = el('#card');
   let dragging = false;
   let dragMoved = false;
-  let axisLocked = false;   // true once we've decided this gesture is horizontal
-  let aborted = false;      // true if the gesture turned out to be a vertical scroll
   let startX = 0;
-  let startY = 0;
   let dx = 0;
-  const SWIPE_THRESHOLD = 50;   // 슬라이드 민감도 (필요시 조절)
-  const AXIS_LOCK_THRESHOLD = 8; // 이 정도 움직여야 가로/세로 의도를 판단
+  const SWIPE_THRESHOLD = 50; // 슬라이드 민감도 (필요시 조절)
 
   card.addEventListener('pointerdown', (e)=>{
     if(e.target.closest('#mark-btn')) return; // 버튼 클릭 예외 처리
-    dragging = true;
-    dragMoved = false;
-    axisLocked = false;
-    aborted = false;
+    dragging = true; 
+    dragMoved = false; 
     dx = 0;
     startX = e.clientX;
-    startY = e.clientY;
     card.classList.add('dragging');
     try{ card.setPointerCapture(e.pointerId); }catch(err){}
   });
 
   card.addEventListener('pointermove', (e)=>{
-    if(!dragging || aborted) return;
+    if(!dragging) return;
     dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-
-    if(!axisLocked){
-      if(Math.abs(dx) < AXIS_LOCK_THRESHOLD && Math.abs(dy) < AXIS_LOCK_THRESHOLD) return;
-      // 첫 움직임의 방향을 보고 가로/세로 의도를 한 번만 결정
-      if(Math.abs(dy) > Math.abs(dx)){
-        // 세로 스크롤 의도 → 드래그 취소하고 브라우저 스크롤에 맡김
-        aborted = true;
-        dragging = false;
-        card.classList.remove('dragging');
-        try{ card.releasePointerCapture(e.pointerId); }catch(err){}
-        return;
-      }
-      axisLocked = true;
+    
+    // 5px 이상 좌우로 이동했을 때만 드래그 시작
+    if(Math.abs(dx) > 5) dragMoved = true;
+    
+    if(dragMoved){
+      // 좌우 이동 및 약간의 회전 효과 적용 (위아래 움직임은 차단)
+      card.style.transform = `translateX(${dx}px) rotate(${dx / 30}deg)`;
+      card.style.opacity = String(1 - Math.min(Math.abs(dx) / 400, 0.4));
     }
-
-    dragMoved = true;
-    // 가로 이동 + 약간의 회전 효과만 적용 (세로 방향은 절대 건드리지 않음)
-    card.style.transform = `translateX(${dx}px) rotate(${dx / 30}deg)`;
-    card.style.opacity = String(1 - Math.min(Math.abs(dx) / 400, 0.4));
   });
 
   function endDrag(e){
-    if(!dragging){ aborted = false; return; }
+    if(!dragging) return;
     dragging = false;
     card.classList.remove('dragging');
+    card.style.transform = '';
+    card.style.opacity = '';
 
     if(dragMoved && Math.abs(dx) > SWIPE_THRESHOLD){
-      const goingNext = dx < 0;
-      if(goingNext && idx < TOTAL - 1){
-        stopAuto();
-        slideToCard(-1, ()=>{ idx++; renderCard(); saveIdx(); });
-      } else if(!goingNext && idx > 0){
-        stopAuto();
-        slideToCard(1, ()=>{ idx--; renderCard(); saveIdx(); });
-      } else {
-        // 맨 끝이라 더 못 넘어감 → 제자리로 복귀
-        card.style.transition = 'transform .28s cubic-bezier(.2,.8,.2,1), opacity .28s ease';
-        card.style.transform = '';
-        card.style.opacity = '';
+      stopAuto();
+      if(dx < 0 && idx < TOTAL - 1){ 
+        idx++; renderCard(); saveIdx(); // 왼쪽으로 밀면 다음 카드
+      } else if(dx > 0 && idx > 0){ 
+        idx--; renderCard(); saveIdx(); // 오른쪽으로 밀면 이전 카드
       }
     } else if(!dragMoved){
-      card.style.transform = '';
-      card.style.opacity = '';
       card.classList.toggle('flipped'); // 드래그가 아니면 카드가 뒤집힘
-    } else {
-      card.style.transition = 'transform .28s cubic-bezier(.2,.8,.2,1), opacity .28s ease';
-      card.style.transform = '';
-      card.style.opacity = '';
     }
     dragMoved = false;
   }
@@ -866,8 +809,8 @@ el('#restart-first-btn').addEventListener('click', ()=>{
   saveIdx();
 });
 
-el('#prev-btn').addEventListener('click', ()=>{ stopAuto(); if(idx>0){ slideToCard(1, ()=>{ idx--; renderCard(); saveIdx(); }); }});
-el('#next-btn').addEventListener('click', ()=>{ stopAuto(); if(idx<TOTAL-1){ slideToCard(-1, ()=>{ idx++; renderCard(); saveIdx(); }); }});
+el('#prev-btn').addEventListener('click', ()=>{ stopAuto(); if(idx>0){ idx--; renderCard(); saveIdx(); }});
+el('#next-btn').addEventListener('click', ()=>{ stopAuto(); if(idx<TOTAL-1){ idx++; renderCard(); saveIdx(); }});
 el('#mark-btn').addEventListener('click', (e)=>{
   e.stopPropagation();
   if(learned.has(idx)) learned.delete(idx); else learned.add(idx);
