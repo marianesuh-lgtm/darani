@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dharani-cache-v2';
+const CACHE_NAME = 'dharani-cache-v2.2';
 const APP_SHELL = [
   './index.html',
   './privacy.html',
