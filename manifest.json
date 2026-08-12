@@ -3,7 +3,7 @@
   "name": "신묘장구대다라니 암송",
   "short_name": "다라니 암송",
   "description": "천수경 신묘장구대다라니 84구절을 학습·퀴즈·빈칸채우기·전체 독송으로 익히는 암송 학습 앱입니다.",
-  "start_url": "./index.html",
+  "start_url": "./dharani.html",
   "scope": "./",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone"],
@@ -13,6 +13,8 @@
   "lang": "ko",
   "dir": "ltr",
   "categories": ["education", "lifestyle", "books"],
+  "prefer_related_applications": false,
+  "related_applications": [],
   "icons": [
     {
       "src": "icons/icon-192.png",
