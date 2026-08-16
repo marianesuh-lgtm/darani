@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dharani-cache-v1.13';
+const CACHE_NAME = 'dharani-cache-v1.14';
 const APP_SHELL = [
   './index.html',
   './privacyDarani.html',
@@ -46,16 +46,26 @@ self.addEventListener('fetch', (event) => {
     caches.match(req).then((cached) => {
       const network = fetch(req)
         .then((res) => {
-          if (res && res.status === 200 && req.url.startsWith(self.location.origin)) {
+          // same-origin('basic') 응답만 캐싱 — 외부 opaque 응답을 잘못 캐싱하는 것 방지
+          if (res && res.status === 200 && res.type === 'basic') {
             const copy = res.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
           }
           return res;
         })
-        .catch(() => {
-          // network failed: serve cache if we have it, otherwise a real
-          // offline Response — never resolve to undefined (causes ERR_FAILED)
+        .catch(async () => {
+          // 네트워크 실패: 캐시가 있으면 그걸 반환
           if (cached) return cached;
+
+          // 페이지 이동(navigate) 요청이면 캐시된 index.html로 폴백 (SPA 오프라인 진입점)
+          if (req.mode === 'navigate') {
+            const fallback = await caches.match('./index.html');
+            if (fallback) return fallback;
+          }
+
+          // 그 외(이미지/폰트/JSON 등)는 캐시도 폴백도 없으면
+          // undefined를 반환하지 않고 항상 유효한 Response를 반환해
+          // net::ERR_FAILED로 죽지 않도록 함
           return new Response(
             '오프라인 상태이며 캐시된 사본이 없습니다.',
             { status: 503, statusText: 'Offline', headers: { 'Content-Type': 'text/plain; charset=utf-8' } }
