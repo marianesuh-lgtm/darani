@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>고객지원 · 신묘장구대다라니 암송</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<style>
+  :root{
+    --bg:#0e131b; --panel:#161d29; --panel2:#1e2733; --line:#2a3444;
+    --ink:#eef1ee; --muted:#8b96a8; --muted2:#5f6a7d; --teal:#4fb3a6; --brass:#caa165;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Noto Sans KR', sans-serif; line-height:1.75;
+    padding:48px 20px 80px;
+  }
+  .wrap{max-width:680px;margin:0 auto;}
+  .eyebrow{font-size:12px;letter-spacing:.15em;color:var(--teal);text-transform:uppercase;font-weight:600;margin-bottom:10px;}
+  h1{font-family:'Noto Serif KR',serif;font-size:26px;font-weight:700;margin:0 0 6px;}
+  .sub{color:var(--muted2);font-size:13.5px;margin-bottom:36px;line-height:1.6;}
+  h2{
+    font-family:'Noto Serif KR',serif;font-size:18px;font-weight:600;
+    margin:40px 0 14px;color:var(--ink);
+  }
+  p, li{color:var(--muted);font-size:15px;}
+  a{color:var(--teal);}
+  .back-link{
+    display:inline-flex;align-items:center;gap:6px;
+    color:var(--muted2);text-decoration:none;font-size:13px;
+    margin-bottom:24px;transition:color .15s;
+  }
+  .back-link:hover{color:var(--teal);}
+  strong{color:var(--ink);font-weight:600;}
+
+  .contact-card{
+    background:linear-gradient(180deg,var(--panel2),var(--panel));
+    border:1px solid var(--line);border-radius:16px;
+    padding:26px 24px;margin-bottom:8px;
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+  }
+  .contact-card .label{font-size:12.5px;color:var(--muted2);margin-bottom:4px;}
+  .contact-card .email{font-family:'Noto Serif KR',serif;font-size:19px;color:var(--ink);font-weight:600;}
+  .mail-btn{
+    background:var(--teal);color:#0e1a18;text-decoration:none;font-weight:700;
+    padding:11px 22px;border-radius:999px;font-size:14px;white-space:nowrap;
+  }
+  .response-note{font-size:12.5px;color:var(--muted2);margin-top:16px;}
+
+  .faq-item{
+    border:1px solid var(--line);border-radius:14px;
+    background:var(--panel);padding:20px 22px;margin-bottom:12px;
+  }
+  .faq-q{
+    font-family:'Noto Serif KR',serif;font-weight:600;font-size:16px;
+    color:var(--ink);margin-bottom:8px;display:flex;gap:10px;
+  }
+  .faq-q .qmark{color:var(--teal);flex-shrink:0;}
+  .faq-a{font-size:14.5px;color:var(--muted);margin:0;padding-left:26px;}
+
+  .steps{padding-left:0;list-style:none;margin:0;}
+  .steps li{
+    counter-increment:step;position:relative;padding-left:34px;margin:10px 0;font-size:14.5px;
+  }
+  .steps li::before{
+    content:counter(step);position:absolute;left:0;top:0;
+    width:22px;height:22px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);
+    color:var(--teal);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  }
+  .steps{counter-reset:step;}
+
+  .app-link-row{text-align:center;margin-top:44px;}
+  .app-link-row a{
+    display:inline-block;background:var(--panel2);border:1px solid var(--line);
+    color:var(--ink);text-decoration:none;padding:12px 24px;border-radius:999px;font-size:14px;
+  }
+
+  hr{border:none;border-top:1px solid var(--line);margin:44px 0;}
+  footer{color:var(--muted2);font-size:12px;text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="index.html">← 앱으로 돌아가기</a>
+  <div class="eyebrow">Support</div>
+  <h1>고객지원</h1>
+  <p class="sub">신묘장구대다라니 암송 (다라니 암송) 앱 이용 중 궁금하신 점이나 문제가 있으시면 이 페이지를 참고해 주세요.</p>
+
+  <div class="contact-card">
+    <div>
+      <div class="label">이메일 문의</div>
+      <div class="email">open_cube@naver.com</div>
+    </div>
+    <a class="mail-btn" href="mailto:open_cube@naver.com">메일 보내기</a>
+  </div>
+  <p class="response-note">보통 영업일 기준 2~3일 이내에 답변드리고 있어요. 문의 시 사용 기기(예: iPhone 15, 갤럭시 S24)와 브라우저·앱 버전을 함께 적어주시면 더 빠르게 도와드릴 수 있습니다.</p>
+
+  <h2>자주 묻는 질문</h2>
+
+  <div class="faq-item">
+    <div class="faq-q"><span class="qmark">Q.</span> 학습 기록(외운 구절)이 갑자기 사라졌어요</div>
+    <p class="faq-a">학습 기록은 서버가 아니라 <strong>사용 중인 기기의 브라우저(또는 앱)에만</strong> 저장돼요. 브라우저 데이터를 지우거나, 시크릿(비공개) 모드로 접속하거나, 다른 기기·다른 브라우저로 열면 기록이 보이지 않는 게 정상이에요. 기기와 브라우저를 그대로 유지하시면 기록은 계속 남아있습니다.</p>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q"><span class="qmark">Q.</span> '듣기' 버튼을 눌러도 소리가 안 나와요</div>
+    <p class="faq-a">듣기 기능은 별도 음원 파일이 아니라 <strong>기기·브라우저에 내장된 음성합성(TTS) 기능</strong>을 사용해요. 일부 구형 브라우저나 특정 브라우저(예: 일부 인앱 브라우저)는 이 기능을 지원하지 않을 수 있어요. 이럴 땐 Chrome, Safari 같은 최신 브라우저에서 다시 시도해 주세요. 또한 기기의 무음 모드/음량이 꺼져 있지 않은지도 확인해 주세요.</p>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q"><span class="qmark">Q.</span> 발음이 어색하거나 기계음처럼 들려요</div>
+    <p class="faq-a">듣기 기능은 실제 스님의 범패 가락이 아니라, <strong>한글 음역을 브라우저 음성으로 읽어주는 것</strong>이에요. 다라니는 일반 한국어 단어가 아니다 보니 음성엔진이 다소 어색하게 읽을 수 있어요. 발음·리듬 확인용 보조 도구로 활용해 주시고, 정확한 독송 가락은 법회나 정식 독송 음원을 참고해 주세요.</p>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q"><span class="qmark">Q.</span> 인터넷이 안 되는 곳에서도 쓸 수 있나요</div>
+    <p class="faq-a">한 번 접속해서 앱을 정상적으로 불러온 이후에는, 오프라인 상태에서도 대부분의 기능(학습·퀴즈·빈칸채우기)을 계속 이용하실 수 있어요. 음성 듣기 기능은 기기·브라우저 환경에 따라 오프라인에서 제한될 수 있습니다.</p>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q"><span class="qmark">Q.</span> 제가 알던 책·법회랑 뜻풀이나 구절 나누는 방식이 달라요</div>
+    <p class="faq-a">신묘장구대다라니는 오랜 세월 구전·필사되며 전해진 음사문이라, <strong>종단·학자에 따라 구절 구분과 해석이 조금씩 달라요.</strong> 이 앱은 일반적으로 통용되는 니라칸타 다라니(Nīlakaṇṭha Dhāraṇī) 복원 연구를 참고했으며, 어느 한 쪽이 틀렸다기보다는 전승 계통의 차이로 봐주시면 좋겠습니다.</p>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q"><span class="qmark">Q.</span> 처음부터 다시 외우고 싶어요 / 기록을 초기화하고 싶어요</div>
+    <p class="faq-a">학습 화면 하단의 <strong>'학습 기록 초기화'</strong> 버튼을 누르면 외운 구절과 진행 위치가 모두 초기화돼요. 단순히 1번 구절로 이동만 하고 싶다면 카드 아래 <strong>'⟲ 처음으로'</strong> 버튼을 이용해 주세요 (이건 기록을 지우지 않아요).</p>
+  </div>
+
+  <h2>빠른 문제 해결</h2>
+  <ol class="steps">
+    <li>화면이 깨지거나 버튼이 눌리지 않으면, 앱을 완전히 종료했다가 다시 열어보세요.</li>
+    <li>그래도 안 되면 브라우저(또는 앱)를 최신 버전으로 업데이트해 주세요.</li>
+    <li>특정 기능만 안 될 경우, 위 자주 묻는 질문에서 해당 항목을 먼저 확인해 주세요.</li>
+    <li>문제가 계속되면 화면을 캡처해서 이메일로 보내주시면 훨씬 빠르게 원인을 파악할 수 있어요.</li>
+  </ol>
+
+  <hr>
+  <p style="text-align:center;font-size:13px;">
+    <a href="privacyDarani.html">개인정보처리방침</a>
+  </p>
+  <footer>© 2026 신묘장구대다라니 암송</footer>
+</div>
+</body>
+</html>
