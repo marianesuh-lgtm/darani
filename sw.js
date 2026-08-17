@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dharani-cache-v5';
+const CACHE_NAME = 'dharani-cache-v6';
 const APP_SHELL = [
   './index.html',
   './privacyDarani.html',
@@ -42,6 +42,11 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
+
+  // 페이지 이동(HTML 내비게이션)은 서비스워커가 건드리지 않고 브라우저가
+  // 직접 처리하게 둔다. Cloudflare Pages의 .html → 확장자 없는 주소로의
+  // 자동 리다이렉트를 서비스워커 안에서 재처리하다 생기는 문제를 원천 차단.
+  if (req.mode === 'navigate') return;
 
   event.respondWith(
     caches.match(req).then((cached) => {
